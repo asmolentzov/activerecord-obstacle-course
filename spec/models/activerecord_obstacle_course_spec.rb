@@ -534,7 +534,7 @@ describe 'ActiveRecord Obstacle Course' do
     # ------------------ ActiveRecord Solution ----------------------
     custom_results = Order.select("users.name, count(orders.id) AS total_order_count").
                           joins(:user).
-                          group("users.id").
+                          group(:user_id).
                           order("users.name")
     # ---------------------------------------------------------------
 
@@ -546,7 +546,7 @@ describe 'ActiveRecord Obstacle Course' do
     expect(custom_results[2].total_order_count).to eq(5)
   end
 
-  xit '28. returns a table of information for all users items' do
+  it '28. returns a table of information for all users items' do
     custom_results = [user_2, user_1, user_3]
 
     # using a single ActiveRecord call, fetch a joined object that mimics the
@@ -558,7 +558,10 @@ describe 'ActiveRecord Obstacle Course' do
     # Dione      |         20
 
     # ------------------ ActiveRecord Solution ----------------------
-    # custom_results =
+    custom_results = Item.select("users.name, count(items.id) AS total_item_count")
+                        .joins(orders: :user)
+                        .group(:user_id)
+                        .order("users.name DESC")
     # ---------------------------------------------------------------
 
     expect(custom_results[0].name).to eq(user_2.name)
@@ -569,7 +572,7 @@ describe 'ActiveRecord Obstacle Course' do
     expect(custom_results[2].total_item_count).to eq(20)
   end
 
-  xit '29. returns a table of information for all users orders and item counts' do
+  it '29. returns a table of information for all users orders and item counts' do
     # using a single ActiveRecord call, fetch a joined object that mimics the
     # following table of information:
     # --------------------------------------------------------------------------
@@ -604,7 +607,10 @@ describe 'ActiveRecord Obstacle Course' do
     # how will you turn this into the proper ActiveRecord commands?
 
     # ------------------ ActiveRecord Solution ----------------------
-    # data = []
+    data = User.select("users.name AS user_name, orders.id AS order_id, count(items.id) AS item_count")
+                .joins(orders: :items)
+                .group(:order_id)
+                .order("users.name DESC")
     # ---------------------------------------------------------------
 
 
